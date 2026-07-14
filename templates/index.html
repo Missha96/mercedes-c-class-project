@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercedes-Benz C-Class (W205)</title>
+    <style>
+        /* Теми по подразбиране (Dark mode) */
+        :root {
+            --bg-color: #09090b;
+            --text-color: #f4f4f5;
+            --card-bg: #18181b;
+            --border-color: #27272a;
+            --input-bg: #09090b;
+            --text-muted: #a1a1aa;
+        }
+
+        /* Стилове за Светъл режим (Light mode) */
+        [data-theme="light"] {
+            --bg-color: #f4f4f5;
+            --text-color: #09090b;
+            --card-bg: #ffffff;
+            --border-color: #e4e4e7;
+            --input-bg: #ffffff;
+            --text-muted: #71717a;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
+        nav { background-color: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        nav .logo { font-weight: bold; color: var(--text-color); }
+        nav .links a { color: var(--text-muted); text-decoration: none; margin-left: 20px; font-size: 14px; }
+        nav .links a:hover { color: var(--text-color); }
+
+        /* Модерен бутон за Dark/Light режим */
+        .theme-btn { background-color: var(--text-color); color: var(--bg-color); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; margin-left: 20px; }
+
+        header { max-width: 1000px; text-align: center; padding: 60px 20px; margin: 0 auto; }
+        h1 { font-size: 42px; font-weight: 300; margin-bottom: 10px; }
+        .subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 30px; }
+        .car-img { width: 100%; max-width: 800px; border-radius: 12px; border: 1px solid var(--border-color); }
+
+        .grid { max-width: 1000px; margin: 30px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 20px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; }
+        .card p.label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin: 0 0 5px 0; }
+        .card p.value { font-size: 20px; margin: 0; font-weight: 600; }
+
+        .section-title { text-align: center; font-size: 28px; margin-top: 60px; }
+        .about-section { max-width: 800px; margin: 30px auto; padding: 0 20px; line-height: 1.6; color: var(--text-muted); text-align: center; }
+
+        /* 📸 Стил за Бонус: Галерия */
+        .gallery-grid { max-width: 1000px; margin: 30px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 20px; }
+        .gallery-item { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); transition: transform 0.2s; }
+        .gallery-item:hover { transform: scale(1.03); }
+
+        .contact-form { max-width: 450px; margin: 40px auto; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 30px; border-radius: 12px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .form-group input, .form-group textarea { width: 100%; box-sizing: border-box; background-color: var(--input-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; color: var(--text-color); font-size: 14px; }
+
+        .btn { display: block; width: 100%; background-color: var(--text-color); color: var(--bg-color); font-weight: bold; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        footer { text-align: center; padding: 40px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border-color); margin-top: 60px; }
+    </style>
+</head>
+<body>
+
+    <!-- Меню с бутон за смяна на режима -->
+    <nav>
+        <div class="logo">W205 ARCHIVE</div>
+        <div class="links">
+            <a href="#">Home</a>
+            <a href="#about">About W205</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contact">Contact</a>
+            <button class="theme-btn" onclick="toggleTheme()">Toggle Mode</button>
+        </div>
+    </nav>
+
+    <!-- Главна Hero секция -->
+    <header>
+        <h1>{{ data.title }}</h1>
+        <p class="subtitle">{{ data.subtitle }}</p>
+<!-- Гарантиран визуален блок вместо снимка от интернет -->
+    <img src="{{ url_for('static', filename='hero.jpg') }}" class="car-img" alt="Mercedes C-Class 2015">
+
+
+    </header>
+
+    <!-- Спецификации -->
+    <div class="grid">
+        {% for spec in data.specs %}
+        <div class="card">
+            <p class="label">{{ spec.label }}</p>
+            <p class="value">{{ spec.value }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- За мен (Описание) -->
+    <h2 class="section-title" id="about">{{ data.about_title }}</h2>
+    <div class="about-section">
+        <p>{{ data.description }}</p>
+    </div>
+
+    <!-- 📸 БОНУС 1: Галерия със снимки -->
+    <h2 class="section-title" id="gallery">W205 Visual Gallery</h2>
+
+    <div class="gallery-grid">
+        <img src="{{ url_for('static', filename='front.jpg') }}" class="gallery-item" alt="Mercedes Front">
+        <img src="{{ url_for('static', filename='side.jpg') }}" class="gallery-item" alt="Mercedes Side">
+        <img src="{{ url_for('static', filename='interior.jpg') }}" class="gallery-item" alt="Mercedes Interior">
+    </div>
+
+
+
+    <!-- Контактна форма -->
+    <h2 class="section-title" id="contact">Speak With a Specialist</h2>
+    <div class="contact-form">
+        <form action="/contact" method="POST">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label>Your Message</label>
+                <textarea name="message" rows="4" required placeholder="Write your message here..."></textarea>
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 C-Class Archive. All rights reserved. | AI Full-Stack Challenge</p>
+    </footer>
+
+    <!-- 🌓 БОНУС 2: JavaScript код за Dark/Light Mode -->
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute("data-theme");
+            if (currentTheme === "light") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        }
+    </script>
+
+</body>
+</html>
