@@ -2,39 +2,95 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Табло</title>
+    <title>Табло за управление</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #09090b; color: #f4f4f5; text-align: center; margin-top: 50px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .btn-logout { padding: 10px 20px; background-color: #dc3545; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-home { color: white; text-decoration: none; margin-right: 15px; font-weight: bold; }
+
+        /* Стил за Админ секцията */
+        .admin-panel { display: none; margin-top: 40px; text-align: left; background-color: #18181b; border: 1px solid #27272a; padding: 20px; border-radius: 8px; }
+        .message-card { background-color: #09090b; border: 1px solid #27272a; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+        .message-card h4 { margin: 0 0 5px 0; color: #007bff; }
+        .message-card p { margin: 5px 0; font-size: 14px; color: #a1a1aa; }
+        .message-card .text { color: #f4f4f5; margin-top: 100px; font-style: italic; background: #141416; padding: 10px; border-radius: 4px; }
+    </style>
 </head>
 <body>
-<!-- Добавете това в templates/dashboard.html -->
-<button onclick="window.location.href='/'" style="padding: 10px; background-color: #6c757d; color: white; border: none; cursor: pointer; margin-right: 10px;">
-    Обратно към Начало
-</button>
-<button onclick="logout()" style="padding: 10px; background-color: #dc3545; color: white; border: none; cursor: pointer;">
-    Изход
-</button>
-
-    <div style="text-align: center; margin-top: 50px;">
+    <div class="container">
         <h1>Добре дошли, <span id="userDisplay">Гост</span>!</h1>
-        <p>Вашата роля в системата е: <strong id="roleDisplay">няма</strong></p>
-        <br>
-        <button onclick="logout()">Изход</button>
+        <p>Вашата системна роля е: <strong id="roleDisplay">няма</strong></p>
+
+        <div style="margin-top: 20px;">
+            <a href="/" class="btn-home">⬅ Обратно към Начало</a>
+            <button onclick="logout()" class="btn-logout">Изход от профила</button>
+        </div>
+
+        <!-- СЕКЦИЯ ЗА АДМИНИСТРАТОР (Скрита по подразбиране) -->
+        <div id="adminPanel" class="admin-panel">
+            <h2>📥 Изпратени съобщения от контактната форма (JSON)</h2>
+            <div id="messagesList">Зареждане на съобщенията...</div>
+        </div>
     </div>
 
     <script>
-        // Проверка дали има влязъл потребител
+        // 1. Проверка за сигурност на достъпа
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
         if (!currentUser) {
-            // Ако няма влязъл потребител, го връщаме към формата
-            alert("Моля, влезте в профила си първо!");
             window.location.href = '/auth';
         } else {
-            // Показване на данните на екрана
             document.getElementById('userDisplay').textContent = currentUser.username;
             document.getElementById('roleDisplay').textContent = currentUser.role;
+
+            // 2. Ако потребителят е админ, показваме панела и зареждаме JSON данните
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminPanel').style.display = 'block';
+                fetchAdminMessages();
+            }
         }
 
-        // Функция за изход
+        // 3. Функция за извличане на съобщенията от Flask сървъра
+        function fetchAdminMessages() {
+            fetch('/api/messages')
+                .then(response => response.json())
+                .then(data => {
+                    const listContainer = document.getElementById('messagesList');
+
+                    if (data.length === 0) {
+                        listContainer.innerHTML = '<p style="color: #a1a1aa;">Няма изпратени съобщения.</p>';
+                        return;
+                    }
+
+                    listContainer.innerHTML = ''; // Изчистване на текстовото съобщение за зареждане
+
+                    // Показване на всяко съобщение на екрана
+                    data.forEach(msg => {
+                        const card = document.createElement('div');
+                        card.className = 'message-card';
+                        card.innerHTML = `
+                            <h4>От: ${escapeHTML(msg.name)}</h4>
+                            <p><strong>Ел. поща:</strong> ${escapeHTML(msg.email)}</p>
+                            <p class="text">"${escapeHTML(msg.message)}"</p>
+                        `;
+                        listContainer.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    document.getElementById('messagesList').textContent = 'Грешка при зареждане на файловете.';
+                    console.error(err);
+                });
+        }
+
+        // Помощна функция против XSS инжектиране на зловреден код в съобщенията
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+
+        // 4. Функция за Изход
         function logout() {
             localStorage.removeItem('currentUser');
             window.location.href = '/auth';
