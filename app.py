@@ -34,7 +34,7 @@ def home():
     car_data = {
         "title": "The Mercedes-Benz C-Class",
         "subtitle": "A baby S-Class in every measurable way.",
-        "about_title": "A New Standard, Cast in Silver",
+        "about_title": "A New Standard, Cast in Black",
         "description": "Unveiled at the 2014 North American International Auto Show...",
         "specs": [
             {"label": "Engine Options", "value": "1.6L – 4.0L"},
