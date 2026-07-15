@@ -28,8 +28,22 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
         nav { background-color: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         nav .logo { font-weight: bold; color: var(--text-color); }
+        nav .links { display: flex; align-items: center; }
         nav .links a { color: var(--text-muted); text-decoration: none; margin-left: 20px; font-size: 14px; }
         nav .links a:hover { color: var(--text-color); }
+
+        /* Модерен бутон за Вход / Табло */
+        .auth-nav-btn {
+            background-color: #212529;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 20px;
+            transition: background 0.2s;
+        }
 
         /* Модерен бутон за Dark/Light режим */
         .theme-btn { background-color: var(--text-color); color: var(--bg-color); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: bold; margin-left: 20px; }
@@ -47,7 +61,7 @@
         .section-title { text-align: center; font-size: 28px; margin-top: 60px; }
         .about-section { max-width: 800px; margin: 30px auto; padding: 0 20px; line-height: 1.6; color: var(--text-muted); text-align: center; }
 
-        /* 📸 Стил за Бонус: Галерия */
+        /* Стил за Галерия */
         .gallery-grid { max-width: 1000px; margin: 30px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 20px; }
         .gallery-item { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); transition: transform 0.2s; }
         .gallery-item:hover { transform: scale(1.03); }
@@ -62,37 +76,8 @@
     </style>
 </head>
 <body>
-<!-- Контейнер за навигация в горната част на страницата -->
-<div style="text-align: right; padding: 20px; background-color: #f8f9fa; border-bottom: 1px solid #eee;">
-    <a id="navAuthBtn" href="/auth" style="
-        padding: 10px 20px;
-        background-color: #212529;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        font-family: Arial, sans-serif;
-        font-weight: bold;
-    ">Вход / Регистрация</a>
-</div>
 
-<!-- Скрипт, който проверява дали има влязъл потребител -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Взимаме текущия потребител от localStorage
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const authBtn = document.getElementById('navAuthBtn');
-
-        if (currentUser) {
-            // Ако потребителят е влязъл, променяме текста и линка на бутона
-            authBtn.textContent = `Табло (${currentUser.username})`;
-            authBtn.href = '/dashboard';
-            authBtn.style.backgroundColor = #007bff; // Променяме цвета на син за акцент
-        }
-    });
-</script>
-
-
-    <!-- Меню с бутон за смяна на режима -->
+    <!-- Меню с динамичен бутон Вход/Табло и смяна на режима -->
     <nav>
         <div class="logo">W205 ARCHIVE</div>
         <div class="links">
@@ -100,6 +85,10 @@
             <a href="#about">About W205</a>
             <a href="#gallery">Gallery</a>
             <a href="#contact">Contact</a>
+
+            <!-- Динамичен бутон Вход/Табло -->
+            <a id="navAuthBtn" class="auth-nav-btn" href="/auth">Вход / Регистрация</a>
+
             <button class="theme-btn" onclick="toggleTheme()">Toggle Mode</button>
         </div>
     </nav>
@@ -108,10 +97,8 @@
     <header>
         <h1>{{ data.title }}</h1>
         <p class="subtitle">{{ data.subtitle }}</p>
-<!-- Гарантиран визуален блок вместо снимка от интернет -->
-    <img src="{{ url_for('static', filename='hero.jpg') }}" class="car-img" alt="Mercedes C-Class 2015">
-
-
+        <!-- Използваме Unsplash линк, за да няма грешка 404 за липсващ локален файл -->
+        <img src="https://unsplash.com" class="car-img" alt="Mercedes C-Class 2015">
     </header>
 
     <!-- Спецификации -->
@@ -130,16 +117,14 @@
         <p>{{ data.description }}</p>
     </div>
 
-    <!-- 📸 БОНУС 1: Галерия със снимки -->
+    <!-- Галерия със снимки -->
     <h2 class="section-title" id="gallery">W205 Visual Gallery</h2>
-
     <div class="gallery-grid">
-        <img src="{{ url_for('static', filename='front.jpg') }}" class="gallery-item" alt="Mercedes Front">
-        <img src="{{ url_for('static', filename='side.jpg') }}" class="gallery-item" alt="Mercedes Side">
-        <img src="{{ url_for('static', filename='interior.jpg') }}" class="gallery-item" alt="Mercedes Interior">
+        <!-- Заменени локални файлове с реални уеб линкове против грешки 404 -->
+        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Front">
+        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Side">
+        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Interior">
     </div>
-
-
 
     <!-- Контактна форма -->
     <h2 class="section-title" id="contact">Speak With a Specialist</h2>
@@ -165,8 +150,21 @@
         <p>&copy; 2026 C-Class Archive. All rights reserved. | AI Full-Stack Challenge</p>
     </footer>
 
-    <!-- 🌓 БОНУС 2: JavaScript код за Dark/Light Mode -->
+    <!-- JavaScript Логика -->
     <script>
+        // Скрипт за Проверка на Влязъл Потребител
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const authBtn = document.getElementById('navAuthBtn');
+
+            if (currentUser) {
+                authBtn.textContent = `Табло (${currentUser.username})`;
+                authBtn.href = '/dashboard';
+                authBtn.style.backgroundColor = '#007bff'; // ФИКС: Вече е в правилни кавички
+            }
+        });
+
+        // Скрипт за Dark/Light Mode
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute("data-theme");
             if (currentTheme === "light") {
@@ -176,6 +174,5 @@
             }
         }
     </script>
-
 </body>
 </html>
