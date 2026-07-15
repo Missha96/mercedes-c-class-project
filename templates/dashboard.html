@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Табло</title>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h1>Добре дошли, <span id="userDisplay">Гост</span>!</h1>
+        <p>Вашата роля в системата е: <strong id="roleDisplay">няма</strong></p>
+        <br>
+        <button onclick="logout()">Изход</button>
+    </div>
+
+    <script>
+        // Проверка дали има влязъл потребител
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+        if (!currentUser) {
+            // Ако няма влязъл потребител, го връщаме към формата
+            alert("Моля, влезте в профила си първо!");
+            window.location.href = '/auth';
+        } else {
+            // Показване на данните на екрана
+            document.getElementById('userDisplay').textContent = currentUser.username;
+            document.getElementById('roleDisplay').textContent = currentUser.role;
+        }
+
+        // Функция за изход
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '/auth';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход и Регистрация</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; gap: 50px; margin-top: 50px; }
+        .form-box { border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 300px; }
+        input { width: 90%; padding: 8px; margin: 10px 0; }
+        button { width: 95%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .error { color: red; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <!-- Форма за Регистрация -->
+    <div class="form-box">
+        <h2>Регистрация</h2>
+        <form id="registerForm">
+            <input type="text" id="regUsername" placeholder="Потребителско име" required>
+            <input type="password" id="regPassword" placeholder="Парола" required>
+            <button type="submit">Регистрирай се</button>
+            <p id="regMessage" class="error"></p>
+        </form>
+    </div>
+
+    <!-- Форма за Вход -->
+    <div class="form-box">
+        <h2>Вход</h2>
+        <form id="loginForm">
+            <input type="text" id="loginUsername" placeholder="Потребителско име" required>
+            <input type="password" id="loginPassword" placeholder="Парола" required>
+            <button type="submit">Влез</button>
+            <p id="loginMessage" class="error"></p>
+        </form>
+    </div>
+
+    <script>
+        // Функция за взимане на всички потребители от localStorage
+        function getUsers() {
+            const users = localStorage.getItem('users_db');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Логика за Регистрация
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const messageEl = document.getElementById('regMessage');
+
+            let users = getUsers();
+
+            // Проверка за съществуващ потребител
+            if (users.some(u => u.username === username)) {
+                messageEl.textContent = "Потребителското име вече е заето!";
+                return;
+            }
+
+            // Създаване на нов потребител с автоматична роля "users"
+            const newUser = {
+                username: username,
+                password: password,
+                role: "users"
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users_db', JSON.stringify(users));
+
+            messageEl.style.color = "green";
+            messageEl.textContent = "Регистрацията е успешна! Сега можете да влезете.";
+            this.reset();
+        });
+
+        // Логика за Вход
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const messageEl = document.getElementById('loginMessage');
+
+            const users = getUsers();
+
+            // Намиране на потребителя
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                messageEl.textContent = "Грешно потребителско име или парола!";
+                return;
+            }
+
+            // Записване на текущо влезлия потребител в сесията на браузъра
+            localStorage.setItem('currentUser', JSON.stringify(user));
+
+            // Пренасочване към таблото
+            window.location.href = '/dashboard';
+        });
+    </script>
+</body>
+</html>
