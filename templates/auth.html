@@ -4,28 +4,23 @@
     <meta charset="UTF-8">
     <title>Вход и Регистрация</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; gap: 50px; margin-top: 50px; }
-        .form-box { border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 300px; }
-        input { width: 90%; padding: 8px; margin: 10px 0; }
+        body { font-family: sans-serif; display: flex; justify-content: center; gap: 50px; margin-top: 50px; background-color: #09090b; color: #f4f4f5; }
+        .form-box { border: 1px solid #27272a; padding: 20px; border-radius: 8px; width: 300px; background-color: #18181b; }
+        input { width: 90%; padding: 8px; margin: 10px 0; background-color: #09090b; color: white; border: 1px solid #27272a; }
         button { width: 95%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        .error { color: red; font-size: 14px; }
+        .error { color: #ff4a4a; font-size: 14px; }
     </style>
 </head>
 <body>
-
-    <!-- Форма за Регистрация -->
     <div class="form-box">
         <h2>Регистрация</h2>
         <form id="registerForm">
             <input type="text" id="regUsername" placeholder="Потребителско име" required>
             <input type="password" id="regPassword" placeholder="Парола" required>
             <button type="submit">Регистрирай се</button>
-            <p id="regMessage" class="error"></p>
+            <p id="regMessage"></p>
         </form>
     </div>
-
-    <!-- Форма за Вход -->
     <div class="form-box">
         <h2>Вход</h2>
         <form id="loginForm">
@@ -35,65 +30,32 @@
             <p id="loginMessage" class="error"></p>
         </form>
     </div>
-
     <script>
-        // Функция за взимане на всички потребители от localStorage
-        function getUsers() {
-            const users = localStorage.getItem('users_db');
-            return users ? JSON.parse(users) : [];
-        }
-
-        // Логика за Регистрация
+        function getUsers() { return JSON.parse(localStorage.getItem('users_db') || '[]'); }
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value;
-            const messageEl = document.getElementById('regMessage');
-
             let users = getUsers();
-
-            // Проверка за съществуващ потребител
-            if (users.some(u => u.username === username)) {
-                messageEl.textContent = "Потребителското име вече е заето!";
+            if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                document.getElementById('regMessage').textContent = "Потребителското име е заето!";
                 return;
             }
-
-            // Създаване на нов потребител с автоматична роля "users"
-            const newUser = {
-                username: username,
-                password: password,
-                role: "users"
-            };
-
-            users.push(newUser);
+            let userRole = username.toLowerCase() === "admin" ? "admin" : "user";
+            users.push({ username, password, role: userRole });
             localStorage.setItem('users_db', JSON.stringify(users));
-
-            messageEl.style.color = "green";
-            messageEl.textContent = "Регистрацията е успешна! Сега можете да влезете.";
-            this.reset();
+            document.getElementById('regMessage').textContent = `Успешна регистрация (${userRole})!`;
         });
-
-        // Логика за Вход
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const messageEl = document.getElementById('loginMessage');
-
-            const users = getUsers();
-
-            // Намиране на потребителя
-            const user = users.find(u => u.username === username && u.password === password);
-
+            const user = getUsers().find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
             if (!user) {
-                messageEl.textContent = "Грешно потребителско име или парола!";
+                document.getElementById('loginMessage').textContent = "Грешно име или парола!";
                 return;
             }
-
-            // Записване на текущо влезлия потребител в сесията на браузъра
             localStorage.setItem('currentUser', JSON.stringify(user));
-
-            // Пренасочване към таблото
             window.location.href = '/dashboard';
         });
     </script>
