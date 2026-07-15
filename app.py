@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# Дефиниране на данните за автомобила (заглавие, описание, спецификации, иновации)
+# Начална страница (съществуващият код)
 @app.route('/')
 def home():
     car_data = {
@@ -25,7 +25,17 @@ def home():
     }
     return render_template('index.html', data=car_data)
 
-# Обработка на контактната форма (POST заявка)
+# НОВО: Страница за Вход и Регистрация
+@app.route('/auth')
+def auth():
+    return render_template('auth.html')
+
+# НОВО: Страница Табло (Dashboard) след успешен вход
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+# Обработка на контактната форма
 @app.route('/contact', methods=['POST'])
 def contact():
     name = request.form.get('name')
