@@ -62,6 +62,35 @@
     </style>
 </head>
 <body>
+<!-- Контейнер за навигация в горната част на страницата -->
+<div style="text-align: right; padding: 20px; background-color: #f8f9fa; border-bottom: 1px solid #eee;">
+    <a id="navAuthBtn" href="/auth" style="
+        padding: 10px 20px;
+        background-color: #212529;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+    ">Вход / Регистрация</a>
+</div>
+
+<!-- Скрипт, който проверява дали има влязъл потребител -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Взимаме текущия потребител от localStorage
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const authBtn = document.getElementById('navAuthBtn');
+
+        if (currentUser) {
+            // Ако потребителят е влязъл, променяме текста и линка на бутона
+            authBtn.textContent = `Табло (${currentUser.username})`;
+            authBtn.href = '/dashboard';
+            authBtn.style.backgroundColor = #007bff; // Променяме цвета на син за акцент
+        }
+    });
+</script>
+
 
     <!-- Меню с бутон за смяна на режима -->
     <nav>

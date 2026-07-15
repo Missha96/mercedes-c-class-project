@@ -5,6 +5,14 @@
     <title>Табло</title>
 </head>
 <body>
+<!-- Добавете това в templates/dashboard.html -->
+<button onclick="window.location.href='/'" style="padding: 10px; background-color: #6c757d; color: white; border: none; cursor: pointer; margin-right: 10px;">
+    Обратно към Начало
+</button>
+<button onclick="logout()" style="padding: 10px; background-color: #dc3545; color: white; border: none; cursor: pointer;">
+    Изход
+</button>
+
     <div style="text-align: center; margin-top: 50px;">
         <h1>Добре дошли, <span id="userDisplay">Гост</span>!</h1>
         <p>Вашата роля в системата е: <strong id="roleDisplay">няма</strong></p>
