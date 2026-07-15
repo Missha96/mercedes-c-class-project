@@ -97,8 +97,8 @@
     <header>
         <h1>{{ data.title }}</h1>
         <p class="subtitle">{{ data.subtitle }}</p>
-        <!-- Уеб линк вместо локален файл против грешки 404 -->
-        <img src="https://unsplash.com" class="car-img" alt="Mercedes C-Class 2015">
+        <!-- Твоята локална снимка от папка static -->
+        <img src="{{ url_for('static', filename='hero.jpg') }}" class="car-img" alt="Mercedes C-Class 2015">
     </header>
 
     <!-- Спецификации -->
@@ -120,10 +120,10 @@
     <!-- Галерия със снимки -->
     <h2 class="section-title" id="gallery">W205 Visual Gallery</h2>
     <div class="gallery-grid">
-        <!-- Работещи уеб линкове против грешки 404 -->
-        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Front">
-        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Side">
-        <img src="https://unsplash.com" class="gallery-item" alt="Mercedes Interior">
+        <!-- Твоите локални снимки от папка static -->
+        <img src="{{ url_for('static', filename='front.jpg') }}" class="gallery-item" alt="Mercedes Front">
+        <img src="{{ url_for('static', filename='side.jpg') }}" class="gallery-item" alt="Mercedes Side">
+        <img src="{{ url_for('static', filename='interior.jpg') }}" class="gallery-item" alt="Mercedes Interior">
     </div>
 
     <!-- Контактна форма -->
